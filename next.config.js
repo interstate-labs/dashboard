@@ -6,7 +6,7 @@ const withRoutes = require('nextjs-routes/config')({
   outDir: 'nextjs',
 });
 
-const headers = require('./nextjs/headers');
+// const headers = require('./nextjs/headers');
 const redirects = require('./nextjs/redirects');
 const rewrites = require('./nextjs/rewrites');
 
@@ -42,7 +42,24 @@ const moduleExports = {
   // https://github.com/blockscout/frontend/discussions/167
   rewrites,
   redirects,
-  headers,
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: `
+              default-src 'self';
+              script-src ${ process.env.NEXT_PUBLIC_CSP_SCRIPT_SRC };
+              connect-src ${ process.env.NEXT_PUBLIC_CSP_CONNECT_SRC };
+              // Add other CSP directives as needed
+            `.replace(/\s{2,}/g, ' ').trim(),
+          },
+        ],
+      },
+    ];
+  },
   output: 'standalone',
   productionBrowserSourceMaps: true,
   experimental: {
