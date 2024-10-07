@@ -1,7 +1,8 @@
 import { chakra } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
 import React from 'react';
 
-import ErrorBoundary from 'ui/shared/ErrorBoundary';
+const ErrorBoundary = dynamic(() => import('ui/shared/ErrorBoundary'), { ssr: false });
 
 import AppError from './AppError';
 

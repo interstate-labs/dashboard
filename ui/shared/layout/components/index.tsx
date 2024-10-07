@@ -1,5 +1,7 @@
+import dynamic from 'next/dynamic';
+
 import Footer from 'ui/snippets/footer/Footer';
-import TopRow from 'ui/snippets/topBar/TopBar';
+const TopRow = dynamic(() => import('ui/snippets/topBar/TopBar'), { ssr: false });
 
 import Container from './Container';
 import Content from './Content';
