@@ -49,12 +49,7 @@ const moduleExports = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: `
-              default-src 'self';
-              script-src ${ process.env.NEXT_PUBLIC_CSP_SCRIPT_SRC };
-              connect-src ${ process.env.NEXT_PUBLIC_CSP_CONNECT_SRC };
-              // Add other CSP directives as needed
-            `.replace(/\s{2,}/g, ' ').trim(),
+            value: generateCSP(),
           },
         ],
       },
@@ -75,5 +70,25 @@ const moduleExports = {
     // },
   },
 };
+
+function generateCSP() {
+  const scriptSrc = process.env.NEXT_PUBLIC_CSP_SCRIPT_SRC || '\'self\' \'unsafe-inline\' \'unsafe-eval\'';
+  const connectSrc = process.env.NEXT_PUBLIC_CSP_CONNECT_SRC || '\'self\'';
+
+  return `
+    default-src 'self';
+    script-src ${ scriptSrc };
+    connect-src ${ connectSrc };
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data: https:;
+    font-src 'self';
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    frame-ancestors 'none';
+    block-all-mixed-content;
+    upgrade-insecure-requests;
+  `.replace(/\s{2,}/g, ' ').trim();
+}
 
 module.exports = withBundleAnalyzer(withRoutes(moduleExports));
