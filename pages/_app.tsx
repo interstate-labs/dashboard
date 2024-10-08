@@ -43,6 +43,8 @@ const ERROR_SCREEN_STYLES: ChakraProps = {
   p: { base: 4, lg: 0 },
 };
 
+export const dynamic = 'force-dynamic';
+
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   useLoadFeatures();
