@@ -1,43 +1,42 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import generateCspPolicy from 'nextjs/csp/generateCspPolicy';
-import * as middlewares from 'nextjs/middlewares/index';
+export function middleware(request: NextRequest) {
+  const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+  const cspHeader = `
+    default-src 'self';
+    script-src 'self' 'nonce-${ nonce }' 'strict-dynamic';
+    style-src 'self' 'nonce-${ nonce }';
+    img-src 'self' blob: data:;
+    font-src 'self';
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    frame-ancestors 'none';
+    upgrade-insecure-requests;
+`;
+  // Replace newline characters and spaces
+  const contentSecurityPolicyHeaderValue = cspHeader
+    .replace(/\s{2,}/g, ' ')
+    .trim();
 
-const cspPolicy = generateCspPolicy();
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-nonce', nonce);
 
-export function middleware(req: NextRequest) {
-  const isPageRequest = req.headers.get('accept')?.includes('text/html');
-  const start = Date.now();
+  requestHeaders.set(
+    'Content-Security-Policy',
+    contentSecurityPolicyHeaderValue,
+  );
 
-  if (!isPageRequest) {
-    return;
-  }
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+  response.headers.set(
+    'Content-Security-Policy',
+    contentSecurityPolicyHeaderValue,
+  );
 
-  const accountResponse = middlewares.account(req);
-  if (accountResponse) {
-    return accountResponse;
-  }
-
-  const res = NextResponse.next();
-
-  middlewares.colorTheme(req, res);
-
-  const end = Date.now();
-
-  res.headers.append('Content-Security-Policy', cspPolicy);
-  res.headers.append('Server-Timing', `middleware;dur=${ end - start }`);
-  res.headers.append('Docker-ID', process.env.HOSTNAME || '');
-
-  return res;
+  return response;
 }
-
-/**
- * Configure which routes should pass through the Middleware.
- */
-export const config = {
-  matcher: [ '/', '/:notunderscore((?!_next).+)' ],
-  // matcher: [
-  //   '/((?!.*\\.|api\\/|node-api\\/).*)', // exclude all static + api + node-api routes
-  // ],
-};
