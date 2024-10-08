@@ -45,7 +45,7 @@ class MyDocument extends Document {
           />
 
           { /* eslint-disable-next-line @next/next/no-sync-scripts */ }
-          <script src="/assets/envs.js"/>
+          <script src="/assets/envs.js" nonce="<%= nonce %>"/>
 
           { /* FAVICON */ }
           <link rel="icon" href="/assets/favicon/favicon.ico" sizes="48x48"/>

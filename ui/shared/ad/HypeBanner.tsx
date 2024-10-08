@@ -55,6 +55,7 @@ const HypeBanner = ({ className, platform }: BannerProps) => {
   return (
     <>
       <Script
+        nonce="<%= nonce %>"
         id="hypelab"
         strategy="afterInteractive"
       >

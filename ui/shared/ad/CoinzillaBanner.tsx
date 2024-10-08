@@ -52,7 +52,7 @@ const CoinzillaBanner = ({ className, platform }: BannerProps) => {
     >
       { !isHidden && (
         <>
-          <Script strategy="lazyOnload" src="https://coinzillatag.com/lib/display.js"/>
+          <Script nonce="<%= nonce %>" strategy="lazyOnload" src="https://coinzillatag.com/lib/display.js"/>
           <div className="coinzilla" data-zone="C-26660bf627543e46851"></div>
         </>
       ) }

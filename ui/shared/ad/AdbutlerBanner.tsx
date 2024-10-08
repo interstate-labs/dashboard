@@ -92,8 +92,8 @@ const AdbutlerBanner = ({ className, platform }: BannerProps) => {
     <Flex className={ className } id={ getElementId('adBanner') } h={ height } w={ width }>
       { !isHidden && (
         <>
-          <Script strategy="lazyOnload" id="ad-butler-1">{ connectAdbutler }</Script>
-          <Script strategy="lazyOnload" id="ad-butler-2">{ placeAd(platform) }</Script>
+          <Script nonce="<%= nonce %>" strategy="lazyOnload" id="ad-butler-1">{ connectAdbutler }</Script>
+          <Script nonce="<%= nonce %>" strategy="lazyOnload" id="ad-butler-2">{ placeAd(platform) }</Script>
           <div id="ad-banner"></div>
         </>
       ) }
